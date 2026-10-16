@@ -103,23 +103,28 @@ Cannot find native binding / failed to load rolldown native module
 ### Come è stato risolto nel progetto:
 1. **`.node-version`** impostato a `22.14.0` e **`.nvmrc`** impostato a `22`: Cloudflare Pages rileva automaticamente questi file e attiva subito **Node.js 22 (LTS)**.
 2. **`.npmrc`** aggiornato con:
-   - `omit=` e `include=dev` (installa tutti i compilatori necessari).
-   - `optional=true` (forza npm a includere sempre i binari nativi di Rolldown per Linux).
+   - `include=dev` e `include=optional` (installa tutti i compilatori e i binari nativi di Rolldown per Linux).
    - `engine-strict=false` e `package-lock=true`.
 3. **`package.json`**: Aggiunto campo `"engines": { "node": "^20.19.0 || >=22.12.0" }`.
 
-### Configurazione consigliata in Cloudflare Dashboard:
-In **Settings** → **Builds & deployments** → **Build configurations**:
-- **Framework preset:** `Vite`
-- **Build command:** `npm run build`
-- **Build output directory:** `dist`
-- **Root directory:** `/` (lascia vuoto)
+---
 
+## 🛠️ Risoluzione Errore `Failed: error occurred while running deploy command`
+
+Se Cloudflare Pages mostrava:
+```
+Logs were written to "/opt/buildhome/.config/.wrangler/logs/wrangler-...log"
+Failed: error occurred while running deploy command
+```
+
+### Perché si verifica:
+1. **Conflitto in `wrangler.toml`**: Cloudflare Pages si aspettava solo `pages_build_output_dir = "dist"`. Se era presente un blocco `[build]` con `command` o un parametro `name` che non combacia con il nome del progetto nella dashboard di Cloudflare, Wrangler fallisce istantaneamente.
+2. **Nome del progetto non corrispondente**: Se in `wrangler.toml` è indicato un `name` diverso dal nome dell'applicazione creata su Cloudflare Pages.
+
+### Come visualizzare i log dettagliati di Wrangler in console:
 In **Settings** → **Environment variables**:
-- `NODE_VERSION` = `22`
-- `PACKAGE_MANAGER` = `npm`
-
-Infine vai in **Deployments** → **...** (sull'ultimo deployment) → **Retry deployment** con la spunta su **Clear build cache**.
+- Aggiungi la variabile: **`WRANGLER_LOG`** con valore **`debug`**.
+Con questa variabile attiva, tutti i log interni scritti in `/opt/buildhome/...` verranno stampati **in chiaro direttamente nella schermata di build** di Cloudflare!
 
 ---
 
@@ -127,7 +132,7 @@ Infine vai in **Deployments** → **...** (sull'ultimo deployment) → **Retry d
 
 Il progetto contiene già tutti i file specifici richiesti da Cloudflare:
 
-1. **`wrangler.toml`**: Specifica il nome del progetto, la compatibility date e la cartella di output `dist`.
+1. **`wrangler.toml`**: Configurazione corretta per Pages con `pages_build_output_dir = "dist"`.
 2. **`public/_redirects`**: Regola `/*  /index.html  200` per consentire la navigazione client-side senza errori 404 nei refresh.
 3. **`public/_headers`**: 
    - Cache immutabile di 1 anno per gli asset JS/CSS con hash (`/assets/*`).

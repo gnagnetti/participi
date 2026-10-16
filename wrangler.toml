@@ -1,8 +1,4 @@
-# Cloudflare Pages / Workers Configuration
-name = "participi-russi"
-compatibility_date = "2026-10-16"
+# Cloudflare Pages Configuration
+# Nota: La sezione [build] non va usata in Pages perché è specifica per Workers.
+compatibility_date = "2024-11-01"
 pages_build_output_dir = "dist"
-
-[build]
-command = "npm run build"
-output_directory = "dist"
