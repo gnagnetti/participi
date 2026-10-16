@@ -77,38 +77,49 @@ Poiché il log indica `Restoring from dependencies cache`, Cloudflare riutilizze
 2. Clicca sulla scheda **Deployments**.
 3. Accanto all'ultimo deployment fallito, clicca su **...** (oppure entra nel log) e seleziona **Retry deployment**.
 4. Spunta la casella **"Clear build cache"** (Svuota cache di build) e conferma.
-5. In alternativa, in **Settings** → **Environment variables**, assicurati che siano impostate:
-   - `NODE_VERSION` = `20`
+5. In **Settings** → **Environment variables**, imposta:
+   - `NODE_VERSION` = `22` (oppure `22.14.0`)
    - `PACKAGE_MANAGER` = `npm`
-Cloudflare userà ora esclusivamente `npm ci` con Node.js 20 e la build completerà con successo in ~25 secondi!
+Cloudflare userà ora esclusivamente `npm ci` con Node.js 22 e la build completerà con successo!
 
 ---
 
-## 🛠️ Risoluzione Errore `error: script "build" exited with code 1`
+## 🛠️ Risoluzione EBADENGINE & Rolldown "Cannot find native binding"
 
 Se Cloudflare Pages mostrava:
 ```
-Node.js v20.18.0
-error: script "build" exited with code 1
-Failed: error occurred while running build command
+npm warn EBADENGINE Unsupported engine {
+  package: 'vite@8.3.0',
+  required: { node: '^20.19.0 || >=22.12.0' },
+  current: { node: 'v20.18.0', npm: '10.8.2' }
+}
+Cannot find native binding / failed to load rolldown native module
 ```
 
-### Perché accade:
-1. **Pacchetti di build esclusi in modalità produzione**: In ambienti CI come Cloudflare Pages, `NODE_ENV=production` fa sì che npm/bun salti l'installazione di `devDependencies`. Poiché `vite-plugin-pwa` e `tailwindcss` erano in `devDependencies`, `vite build` falliva immediatamente non trovando il modulo per compilare `vite.config.ts`.
-2. **Comando di build impostato su Bun anziché npm**: Nel pannello di Cloudflare Pages, il campo "Build command" era rimasto impostato sul vecchio `bun run build` anziché sullo standard `npm run build`.
+### Perché si verificava:
+1. **Vite 8 & Rolldown richiedono Node >= 20.19.0 o >= 22.12.0**: Vite 8 è basato internamente su Rolldown. La versione Node 20.18.0 usata precedentemente non supporta i binari compilati di Rolldown.
+2. **Optional Dependencies & Binari nativi**: I binari Linux di Rolldown (`@rolldown/binding-linux-x64-gnu`) sono distribuiti come `optionalDependencies`. Se l'ambiente CI omette i pacchetti opzionali, il modulo nativo non viene trovato.
 
-### Soluzioni applicate nel codice:
-1. **Spostato `vite-plugin-pwa` e `tailwindcss` in `dependencies`**: Ora vengono SEMPRE installati anche in ambiente CI di produzione.
-2. **Aggiunto `.npmrc` con `production=false`**: Forza l'installazione di tutti i compilatori e tipi durante il deploy.
-3. **Aggiornato `package-lock.json`**: Allineato al 100% per consentire a `npm ci` di installare in modo riproducibile e veloce.
-4. **Reso portabile `vite.config.ts`**: Utilizzo di `fileURLToPath(new URL('.', import.meta.url))` universale per tutti i motori JavaScript.
+### Come è stato risolto nel progetto:
+1. **`.node-version`** impostato a `22.14.0` e **`.nvmrc`** impostato a `22`: Cloudflare Pages rileva automaticamente questi file e attiva subito **Node.js 22 (LTS)**.
+2. **`.npmrc`** aggiornato con:
+   - `omit=` e `include=dev` (installa tutti i compilatori necessari).
+   - `optional=true` (forza npm a includere sempre i binari nativi di Rolldown per Linux).
+   - `engine-strict=false` e `package-lock=true`.
+3. **`package.json`**: Aggiunto campo `"engines": { "node": "^20.19.0 || >=22.12.0" }`.
 
-### Configurazione raccomandata in Cloudflare Dashboard:
+### Configurazione consigliata in Cloudflare Dashboard:
 In **Settings** → **Builds & deployments** → **Build configurations**:
 - **Framework preset:** `Vite`
 - **Build command:** `npm run build`
 - **Build output directory:** `dist`
 - **Root directory:** `/` (lascia vuoto)
+
+In **Settings** → **Environment variables**:
+- `NODE_VERSION` = `22`
+- `PACKAGE_MANAGER` = `npm`
+
+Infine vai in **Deployments** → **...** (sull'ultimo deployment) → **Retry deployment** con la spunta su **Clear build cache**.
 
 ---
 
