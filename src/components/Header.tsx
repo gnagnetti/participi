@@ -2,6 +2,7 @@ import React from 'react';
 import { Flame, Trophy, Volume2, ShieldCheck, RefreshCw } from 'lucide-react';
 import { UserStats } from '../types';
 import { speakRussian } from '../utils/speech';
+import { PWAInstallButton } from './PWAInstallButton';
 
 interface HeaderProps {
   stats: UserStats;
@@ -38,26 +39,28 @@ export const Header: React.FC<HeaderProps> = ({ stats, onOpenStats }) => {
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 text-white px-4 py-3 shadow-md">
+    <header className="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 text-white px-3 md:px-4 py-2.5 shadow-md">
       <div className="max-w-2xl mx-auto flex items-center justify-between gap-2">
         {/* Logo and App Title */}
-        <div className="flex items-center gap-2.5 min-w-0">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-500 to-rose-600 flex items-center justify-center shadow-lg shadow-amber-500/20 shrink-0 font-bold text-lg text-white">
+        <div className="flex items-center gap-2 min-w-0">
+          <div className="w-8 h-8 md:w-9 md:h-9 rounded-xl bg-gradient-to-tr from-amber-500 to-rose-600 flex items-center justify-center shadow-lg shadow-amber-500/20 shrink-0 font-bold text-base md:text-lg text-white">
             П
           </div>
           <div className="min-w-0">
-            <h1 className="text-base font-bold tracking-tight text-white leading-tight truncate">
+            <h1 className="text-sm md:text-base font-bold tracking-tight text-white leading-tight truncate">
               I Participi Russi
             </h1>
-            <div className="flex items-center gap-1.5 text-xs text-emerald-400">
+            <div className="flex items-center gap-1.5 text-[11px] text-emerald-400">
               <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span className="font-medium text-emerald-300">Offline • 100% Locale</span>
+              <span className="font-medium text-emerald-300 truncate">Offline • 100% Locale</span>
             </div>
           </div>
         </div>
 
         {/* User Badges & Gamification Bar */}
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-1.5 md:gap-2 shrink-0">
+          {/* PWA In-App Install prompt button */}
+          <PWAInstallButton compact={true} />
           {/* Audio Pronunciation check button */}
           <button
             onClick={handleTestVoice}

@@ -1,0 +1,8 @@
+# Cloudflare Pages / Workers Configuration
+name = "participi-russi"
+compatibility_date = "2026-10-16"
+pages_build_output_dir = "dist"
+
+[build]
+command = "npm run build"
+output_directory = "dist"

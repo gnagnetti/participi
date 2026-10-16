@@ -8,6 +8,7 @@ import { MistakesAndStatsSection } from './components/MistakesAndStatsSection';
 import { CheatSheetSection } from './components/CheatSheetSection';
 import { UserStats, ParticipleCategory } from './types';
 import { getStoredStats } from './utils/storage';
+import { OfflineIndicator } from './components/OfflineIndicator';
 
 export default function App() {
   const [currentTab, setCurrentTab] = useState<TabType>('teoria');
@@ -35,6 +36,9 @@ export default function App() {
         stats={stats}
         onOpenStats={() => setCurrentTab('errori_stats')}
       />
+
+      {/* Offline Status Banner */}
+      <OfflineIndicator />
 
       {/* Main Content Area (Mobile Viewport Optimized) */}
       <main className="flex-1 w-full max-w-2xl mx-auto px-3.5 pt-3.5 pb-24">

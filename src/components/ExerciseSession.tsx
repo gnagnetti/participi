@@ -87,6 +87,19 @@ export const ExerciseSession: React.FC<ExerciseSessionProps> = ({
     const isCorrect = selectedOption.trim() === currentExercise.correctAnswer.trim();
     setIsAnswerChecked(true);
 
+    // Trigger mobile haptic feedback if supported
+    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+      try {
+        if (isCorrect) {
+          navigator.vibrate(35);
+        } else {
+          navigator.vibrate([50, 40, 50]);
+        }
+      } catch {
+        // gracefully ignore
+      }
+    }
+
     // Save progress to local storage
     const updatedStats = recordExerciseAttempt(
       currentExercise.id,

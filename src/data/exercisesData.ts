@@ -1,6 +1,7 @@
 import { ExerciseItem } from '../types';
 import { ADDITIONAL_EXERCISES_PART_1 } from './additionalExercisesPart1';
 import { ADDITIONAL_EXERCISES_PART_2 } from './additionalExercisesPart2';
+import { ADDITIONAL_EXERCISES_PART_3 } from './additionalExercisesPart3';
 
 const BASE_EXERCISES: ExerciseItem[] = [
   // ==========================================
@@ -552,5 +553,6 @@ export const EXERCISES: ExerciseItem[] = [
   ...BASE_EXERCISES,
   ...ADDITIONAL_EXERCISES_PART_1,
   ...ADDITIONAL_EXERCISES_PART_2,
+  ...ADDITIONAL_EXERCISES_PART_3,
 ];
 
