@@ -84,6 +84,34 @@ Cloudflare userà ora esclusivamente `npm ci` con Node.js 20 e la build complete
 
 ---
 
+## 🛠️ Risoluzione Errore `error: script "build" exited with code 1`
+
+Se Cloudflare Pages mostrava:
+```
+Node.js v20.18.0
+error: script "build" exited with code 1
+Failed: error occurred while running build command
+```
+
+### Perché accade:
+1. **Pacchetti di build esclusi in modalità produzione**: In ambienti CI come Cloudflare Pages, `NODE_ENV=production` fa sì che npm/bun salti l'installazione di `devDependencies`. Poiché `vite-plugin-pwa` e `tailwindcss` erano in `devDependencies`, `vite build` falliva immediatamente non trovando il modulo per compilare `vite.config.ts`.
+2. **Comando di build impostato su Bun anziché npm**: Nel pannello di Cloudflare Pages, il campo "Build command" era rimasto impostato sul vecchio `bun run build` anziché sullo standard `npm run build`.
+
+### Soluzioni applicate nel codice:
+1. **Spostato `vite-plugin-pwa` e `tailwindcss` in `dependencies`**: Ora vengono SEMPRE installati anche in ambiente CI di produzione.
+2. **Aggiunto `.npmrc` con `production=false`**: Forza l'installazione di tutti i compilatori e tipi durante il deploy.
+3. **Aggiornato `package-lock.json`**: Allineato al 100% per consentire a `npm ci` di installare in modo riproducibile e veloce.
+4. **Reso portabile `vite.config.ts`**: Utilizzo di `fileURLToPath(new URL('.', import.meta.url))` universale per tutti i motori JavaScript.
+
+### Configurazione raccomandata in Cloudflare Dashboard:
+In **Settings** → **Builds & deployments** → **Build configurations**:
+- **Framework preset:** `Vite`
+- **Build command:** `npm run build`
+- **Build output directory:** `dist`
+- **Root directory:** `/` (lascia vuoto)
+
+---
+
 ## ⚙️ File di Configurazione Cloudflare già Inclusi nel Progetto
 
 Il progetto contiene già tutti i file specifici richiesti da Cloudflare:

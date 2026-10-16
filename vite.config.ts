@@ -1,6 +1,7 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
+import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
@@ -16,9 +17,7 @@ export default defineConfig(() => {
           'apple-touch-icon.png',
           'icon.svg',
           'pwa-192x192.png',
-          'pwa-512x512.png',
-          '_headers',
-          '_redirects'
+          'pwa-512x512.png'
         ],
         manifest: {
           id: '/',
@@ -93,8 +92,11 @@ export default defineConfig(() => {
     ],
     resolve: {
       alias: {
-        '@': path.resolve(import.meta.dirname ?? '.', '.'),
+        '@': fileURLToPath(new URL('.', import.meta.url)),
       },
+    },
+    build: {
+      chunkSizeWarningLimit: 1500,
     },
     server: {
       // HMR is disabled in AI Studio via DISABLE_HMR env var.
