@@ -1,0 +1,6 @@
+{
+  "name": "I Participi Russi: Teoria ed Esercizi",
+  "description": "Applicazione mobile interattiva e offline-first per padroneggiare i participi russi con teoria esaustiva, esercizi a scelta multipla e ripasso errori.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
