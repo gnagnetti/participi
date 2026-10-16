@@ -2,6 +2,9 @@ import { ExerciseItem } from '../types';
 import { ADDITIONAL_EXERCISES_PART_1 } from './additionalExercisesPart1';
 import { ADDITIONAL_EXERCISES_PART_2 } from './additionalExercisesPart2';
 import { ADDITIONAL_EXERCISES_PART_3 } from './additionalExercisesPart3';
+import { ADDITIONAL_EXERCISES_PART_4 } from './additionalExercisesPart4';
+import { ADDITIONAL_EXERCISES_PART_5 } from './additionalExercisesPart5';
+import { ADDITIONAL_EXERCISES_PART_6 } from './additionalExercisesPart6';
 
 const BASE_EXERCISES: ExerciseItem[] = [
   // ==========================================
@@ -554,5 +557,8 @@ export const EXERCISES: ExerciseItem[] = [
   ...ADDITIONAL_EXERCISES_PART_1,
   ...ADDITIONAL_EXERCISES_PART_2,
   ...ADDITIONAL_EXERCISES_PART_3,
+  ...ADDITIONAL_EXERCISES_PART_4,
+  ...ADDITIONAL_EXERCISES_PART_5,
+  ...ADDITIONAL_EXERCISES_PART_6,
 ];
 

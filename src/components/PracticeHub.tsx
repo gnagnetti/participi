@@ -210,7 +210,7 @@ export const PracticeHub: React.FC<PracticeHubProps> = ({
           </div>
 
           <div className="flex items-center gap-1.5 bg-slate-900/90 p-1 rounded-xl border border-slate-800">
-            {([5, 10, 20, 'all'] as const).map((count) => (
+            {([5, 10, 20, 50, 'all'] as const).map((count) => (
               <button
                 key={count}
                 onClick={() => setSessionLimit(count)}
